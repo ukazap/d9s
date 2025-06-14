@@ -2,6 +2,8 @@ defmodule D9s.Deployments.Deployment do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "deployments" do
     field :status, :string, default: "pending"
     field :started_at, :utc_datetime

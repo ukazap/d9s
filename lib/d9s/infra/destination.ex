@@ -2,6 +2,8 @@ defmodule D9s.Infra.Destination do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "destinations" do
     field :name, :string
     field :adapter_type, :string

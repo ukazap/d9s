@@ -2,6 +2,8 @@ defmodule D9s.Apps.App do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "apps" do
     field :name, :string
     field :description, :string

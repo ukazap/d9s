@@ -14,7 +14,13 @@ D9s is a Phoenix-based deployment orchestration platform that manages applicatio
 
 **Early development** - MVP targeting AWS ASG + Kamal adapter.
 
-Current focus: Core data models, basic web interface, first deployment adapter.
+Current focus: 
+
+- ✅ Core data models
+- ⏳ context modules
+- ⏳ first deployment adapter
+- ⏳ JSON API
+- ⏳ basic web interface
 
 ## Documentation
 
@@ -28,6 +34,15 @@ Current focus: Core data models, basic web interface, first deployment adapter.
 mix setup
 mix phx.server
 # Visit localhost:4000
+```
+
+**Testing and docs:**
+```bash
+# Run tests
+mix test
+
+# Generate docs
+mix docs
 ```
 
 **Tech stack:** Phoenix LiveView, Ecto, Oban, Tailwind

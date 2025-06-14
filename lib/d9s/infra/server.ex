@@ -2,6 +2,8 @@ defmodule D9s.Infra.Server do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "servers" do
     field :instance_id, :string
     field :status, :string, default: "unknown"
