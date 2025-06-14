@@ -63,7 +63,8 @@ config :phoenix, :json_library, Jason
 config :d9s, Oban,
   engine: Oban.Engines.Lite,
   queues: [default: 10],
-  repo: D9s.Repo
+  repo: D9s.Repo,
+  notifier: Oban.Notifiers.PG
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
