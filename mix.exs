@@ -10,7 +10,13 @@ defmodule D9s.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+
+      # Docs
+      name: "D9s",
+      source_url: "https://github.com/ukazap/d9s",
+      homepage_url: "https://github.com/ukazap/d9s",
+      docs: &docs/0
     ]
   end
 
@@ -61,7 +67,22 @@ defmodule D9s.MixProject do
       {:bandit, "~> 1.5"},
       {:oban, "~> 2.19"},
       {:oban_web, "~> 2.11"},
-      {:tidewave, "~> 0.1", only: :dev}
+      {:tidewave, "~> 0.1", only: :dev},
+      {:ex_doc, "~> 0.38.2", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras:
+        [
+          "README.md",
+          "docs/roadmap.md"
+        ] ++ Path.wildcard("docs/adr/*.md"),
+      groups_for_extras: [
+        "Architecture Decision Records": ~r/docs\/adr\//
+      ]
     ]
   end
 
