@@ -60,7 +60,8 @@ defmodule D9s.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:oban, "~> 2.19"},
-      {:oban_web, "~> 2.11"}
+      {:oban_web, "~> 2.11"},
+      {:tidewave, "~> 0.1", only: :dev}
     ]
   end
 
