@@ -1,4 +1,4 @@
-# D9s
+<img width="150" src="assets/logo.svg" />
 
 D9s is a Phoenix-based deployment orchestration platform that manages application deployments across multiple environments and cloud providers using pluggable adapters.
 
@@ -24,8 +24,8 @@ Current focus:
 
 ## Documentation
 
-- **[Development Roadmap](docs/roadmap.md)** - Strategic vision, goals, planned features
-- **[Architecture Decision Records](docs/adr/0-architecture-decision-records.md)** - Technical design decisions
+- [Development Roadmap](docs/roadmap.md) - Strategic vision, goals, planned features
+- [Architecture Decision Records](docs/adr/0-architecture-decision-records.md) - Technical design decisions
 
 ## Development
 
@@ -45,7 +45,7 @@ mix test
 mix docs
 ```
 
-**Tech stack:** Phoenix LiveView, Ecto, Oban, Tailwind
+**Tech stack:** Ecto, Oban, SQLite+Litestream, Phoenix LiveView, Tailwind
 
 ## Contributing
 

@@ -75,9 +75,10 @@ defmodule D9s.MixProject do
   defp docs do
     [
       main: "readme",
+      logo: "assets/logo.svg",
       extras:
         [
-          "README.md",
+          {"README.md", title: "D9s"},
           "docs/roadmap.md"
         ] ++ Path.wildcard("docs/adr/*.md"),
       groups_for_extras: [
