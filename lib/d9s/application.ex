@@ -10,12 +10,12 @@ defmodule D9s.Application do
     children = [
       D9sWeb.Telemetry,
       D9s.Repo,
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:d9s, :ecto_repos), skip: skip_migrations?()},
+      {Ecto.Migrator, repos: Application.fetch_env!(:d9s, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:d9s, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: D9s.PubSub},
       # Start a worker by calling: D9s.Worker.start_link(arg)
       # {D9s.Worker, arg},
+      {Oban, Application.fetch_env!(:d9s, Oban)},
       # Start to serve requests, typically the last entry
       D9sWeb.Endpoint
     ]
