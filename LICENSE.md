@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) Ukaza Putro Satya Perdana
+Copyright (c) 2025-present, Ukaza Putro Satya Perdana
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
