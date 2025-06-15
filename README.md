@@ -10,7 +10,7 @@ D9s manages application deployments across multiple environments and cloud provi
 - **Real-time monitoring** - Track deployment status, server health, and rollbacks
 - **Stupid simple** - D9s runs on single Linux box without complicated database setup.
 
-## Project Status
+## Project Status: Under Construction 🚧
 
 **Early development** - MVP targeting AWS ASG + Kamal adapter.
 

@@ -20,8 +20,6 @@ defmodule D9sWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-
-    oban_dashboard("/oban")
   end
 
   # Other scopes may use custom stacks.
@@ -43,6 +41,8 @@ defmodule D9sWeb.Router do
 
       live_dashboard "/dashboard", metrics: D9sWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      oban_dashboard("/oban")
     end
   end
 end
