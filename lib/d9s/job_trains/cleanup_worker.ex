@@ -13,12 +13,15 @@ defmodule D9s.JobTrains.CleanupWorker do
   alias D9s.Repo
   alias D9s.JobTrains.{LocomotiveJob, TrainJob}
 
+  @worker_name __MODULE__ |> Module.split() |> Enum.join(".")
+
   @impl Oban.Worker
-  def perform(_) do
-    Logger.info("Job train cleanup in progress...")
+  def perform(_job) do
+    Logger.debug("Job train cleanup in progress...")
     cleanup_orphaned_locomotives()
     cleanup_orphaned_train_jobs()
-    Logger.info("Job train cleanup done.")
+    cleanup_completed_cleanup_jobs()
+    Logger.debug("Job train cleanup done.")
     :ok
   end
 
@@ -66,6 +69,18 @@ defmodule D9s.JobTrains.CleanupWorker do
     # Delete by IDs (SQLite doesn't support JOINs in DELETE)
     if job_ids != [] do
       Repo.delete_all(from tj in TrainJob, where: tj.oban_job_id in ^job_ids)
+    end
+  end
+
+  defp cleanup_completed_cleanup_jobs do
+    completed_cleanup_jobs =
+      from j in Oban.Job,
+        where: j.worker == @worker_name and j.state == "completed"
+
+    {count, _} = Repo.delete_all(completed_cleanup_jobs)
+
+    if count > 0 do
+      Logger.debug("Deleted #{count} completed cleanup jobs")
     end
   end
 end
