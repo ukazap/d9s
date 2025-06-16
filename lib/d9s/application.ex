@@ -13,10 +13,8 @@ defmodule D9s.Application do
       {Ecto.Migrator, repos: Application.fetch_env!(:d9s, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:d9s, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: D9s.PubSub},
-      # Start a worker by calling: D9s.Worker.start_link(arg)
-      # {D9s.Worker, arg},
+      {Task, &reset_executing_jobs/0},
       {Oban, Application.fetch_env!(:d9s, Oban)},
-      # Start to serve requests, typically the last entry
       D9sWeb.Endpoint
     ]
 
@@ -37,5 +35,14 @@ defmodule D9s.Application do
   defp skip_migrations?() do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") == nil
+  end
+
+  defp reset_executing_jobs do
+    import Ecto.Query
+
+    D9s.Repo.update_all(
+      from(j in Oban.Job, where: j.state == "executing"),
+      set: [state: "available"]
+    )
   end
 end
