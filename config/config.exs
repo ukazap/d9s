@@ -67,11 +67,7 @@ config :d9s, Oban,
   notifier: Oban.Notifiers.PG,
   plugins: [
     {Oban.Plugins.Pruner, max_age: _thirty_days = 30 * 24 * 60 * 60},
-    {Oban.Plugins.Cron,
-     crontab: [
-       {"@reboot", D9s.JobTrains.CleanupWorker},
-       {"*/5 * * * *", D9s.JobTrains.CleanupWorker}
-     ]}
+    {D9s.JobTrains.CleanupPlugin, interval: :timer.minutes(5)}
   ]
 
 # Import environment specific config. This must remain at the bottom

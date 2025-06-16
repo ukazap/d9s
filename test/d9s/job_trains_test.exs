@@ -111,7 +111,7 @@ defmodule D9s.JobTrainsTest do
       Oban.cancel_job(job1.id)
 
       # Run cleanup
-      assert :ok = D9s.JobTrains.CleanupWorker.perform([])
+      D9s.JobTrains.CleanupPlugin.cleanup_now()
 
       # Second job becomes locomotive
       job2_updated = Repo.get(Oban.Job, job2.id)
@@ -132,7 +132,7 @@ defmodule D9s.JobTrainsTest do
       assert Repo.get_by(TrainJob, oban_job_id: job.id)
 
       # Run cleanup
-      assert :ok = D9s.JobTrains.CleanupWorker.perform([])
+      D9s.JobTrains.CleanupPlugin.cleanup_now()
 
       # Orphaned TrainJob deleted
       refute Repo.get_by(TrainJob, oban_job_id: job.id)

@@ -20,25 +20,20 @@ defmodule D9s.JobTrains.Advancement do
       {:ok, :ok}
   """
   @spec advance(String.t(), integer()) :: :ok | {:error, term()}
-  def advance(train_id, oban_job_id) do
+  def advance(train_id, finished_oban_job_id) do
     Repo.transact(fn ->
-      with locomotive <- get_current_locomotive(train_id, oban_job_id),
-           {_, _} <- detach_locomotive(locomotive),
+      with :ok <- detach_locomotive(train_id, finished_oban_job_id),
            next_oban_job <- find_next_oban_job(train_id) do
-        attach_new_locomotive(next_oban_job, train_id)
+        attach_new_locomotive(train_id, next_oban_job)
       end
     end)
   end
 
-  defp get_current_locomotive(train_id, oban_job_id) do
-    %LocomotiveJob{train_id: train_id, oban_job_id: oban_job_id}
-  end
+  defp detach_locomotive(train_id, finished_oban_job_id) do
+    Repo.delete_all(from c in LocomotiveJob, where: c.train_id == ^train_id)
+    Repo.delete_all(from tj in TrainJob, where: tj.oban_job_id == ^finished_oban_job_id)
 
-  defp detach_locomotive(%{train_id: train_id, oban_job_id: oban_job_id}) do
-    loco_count = Repo.delete_all(from c in LocomotiveJob, where: c.train_id == ^train_id)
-    train_count = Repo.delete_all(from tj in TrainJob, where: tj.oban_job_id == ^oban_job_id)
-
-    {loco_count, train_count}
+    :ok
   end
 
   defp find_next_oban_job(train_id) do
@@ -53,12 +48,12 @@ defmodule D9s.JobTrains.Advancement do
     |> Repo.one()
   end
 
-  defp attach_new_locomotive(nil, _train_id), do: :ok
+  defp attach_new_locomotive(_train_id, nil), do: :ok
 
-  defp attach_new_locomotive(oban_job, train_id) do
-    with {:ok, _} <- Ecto.Changeset.change(oban_job, state: "available") |> Repo.update(),
-         {:ok, _} <-
-           Repo.insert(%LocomotiveJob{train_id: train_id, oban_job_id: oban_job.id}) do
+  defp attach_new_locomotive(train_id, next_oban_job) do
+    with {:ok, _} <- Ecto.Changeset.change(next_oban_job, state: "available") |> Repo.update(),
+         loco <- %LocomotiveJob{train_id: train_id, oban_job_id: next_oban_job.id},
+         {:ok, _} <- Repo.insert(loco) do
       :ok
     end
   end
