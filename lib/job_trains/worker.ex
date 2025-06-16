@@ -1,11 +1,11 @@
-defmodule D9s.JobTrains.Worker do
+defmodule JobTrains.Worker do
   @moduledoc """
   Worker macro for jobs that should execute in trains (sequentially per train_id).
 
   ## Usage
 
       defmodule MyWorker do
-        use D9s.JobTrains.Worker, 
+        use JobTrains.Worker, 
           queue: :deployments,
           on_cancelled: :hold,
           on_discarded: :advance
@@ -27,12 +27,12 @@ defmodule D9s.JobTrains.Worker do
 
     quote do
       use Oban.Worker, unquote(oban_opts)
-      @behaviour D9s.JobTrains.Worker
+      @behaviour JobTrains.Worker
 
       def perform(%Oban.Job{meta: %{"train_id" => train_id}, id: job_id} = job)
           when not is_nil(train_id) do
         result = perform_in_train(job)
-        D9s.JobTrains.Advancement.advance(train_id, job_id)
+        JobTrains.Advancement.advance(train_id, job_id)
         result
       end
 

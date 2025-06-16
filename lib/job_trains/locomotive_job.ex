@@ -1,4 +1,4 @@
-defmodule D9s.JobTrains.LocomotiveJob do
+defmodule JobTrains.LocomotiveJob do
   use Ecto.Schema
   import Ecto.Changeset
 

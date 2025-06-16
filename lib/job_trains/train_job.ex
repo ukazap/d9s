@@ -1,4 +1,4 @@
-defmodule D9s.JobTrains.TrainJob do
+defmodule JobTrains.TrainJob do
   use Ecto.Schema
 
   @primary_key false

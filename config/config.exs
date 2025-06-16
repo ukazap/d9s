@@ -60,6 +60,8 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :d9s, JobTrains, repo: D9s.Repo
+
 config :d9s, Oban,
   engine: Oban.Engines.Lite,
   queues: [default: 10, cleanup: 1],
@@ -67,7 +69,7 @@ config :d9s, Oban,
   notifier: Oban.Notifiers.PG,
   plugins: [
     {Oban.Plugins.Pruner, max_age: _thirty_days = 30 * 24 * 60 * 60},
-    {D9s.JobTrains.CleanupPlugin, interval: :timer.minutes(5)}
+    {JobTrains.Maintenance, interval: :timer.minutes(5)}
   ]
 
 # Import environment specific config. This must remain at the bottom

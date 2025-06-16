@@ -1,14 +1,14 @@
-defmodule D9s.JobTrainsTest do
+defmodule JobTrainsTest do
   use D9s.DataCase, async: true
   use Oban.Testing, repo: D9s.Repo
 
-  alias D9s.JobTrains
-  alias D9s.JobTrains.{LocomotiveJob, TrainJob}
+  alias JobTrains
+  alias JobTrains.{LocomotiveJob, TrainJob}
 
   defmodule TestWorker do
-    use D9s.JobTrains.Worker, queue: :default
+    use JobTrains.Worker, queue: :default
 
-    @impl D9s.JobTrains.Worker
+    @impl JobTrains.Worker
     def perform_in_train(%Oban.Job{args: args}) do
       send(self(), {:job_performed, args})
       :ok
@@ -111,7 +111,7 @@ defmodule D9s.JobTrainsTest do
       Oban.cancel_job(job1.id)
 
       # Run cleanup
-      D9s.JobTrains.CleanupPlugin.cleanup_now()
+      JobTrains.Maintenance.perform()
 
       # Second job becomes locomotive
       job2_updated = Repo.get(Oban.Job, job2.id)
@@ -132,7 +132,7 @@ defmodule D9s.JobTrainsTest do
       assert Repo.get_by(TrainJob, oban_job_id: job.id)
 
       # Run cleanup
-      D9s.JobTrains.CleanupPlugin.cleanup_now()
+      JobTrains.Maintenance.perform()
 
       # Orphaned TrainJob deleted
       refute Repo.get_by(TrainJob, oban_job_id: job.id)

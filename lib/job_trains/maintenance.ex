@@ -1,23 +1,24 @@
-defmodule D9s.JobTrains.CleanupPlugin do
+defmodule JobTrains.Maintenance do
   @moduledoc """
-  Oban plugin for periodic cleanup of stuck job trains.
+  Oban plugin for periodic maintenance of job trains.
   """
 
   @behaviour Oban.Plugin
 
   require Logger
   import Ecto.Query
-  alias D9s.Repo
-  alias D9s.JobTrains.{LocomotiveJob, TrainJob}
+  alias JobTrains.{LocomotiveJob, TrainJob}
+
+  @repo Application.compile_env!(:d9s, [JobTrains, :repo])
 
   @default_interval :timer.minutes(5)
 
-  def cleanup_now do
-    Logger.debug("Cleaning up job trains...")
+  def perform do
+    Logger.debug("JobTrains.Maintenance performing...")
     delete_records_missing_oban_jobs(LocomotiveJob)
     delete_records_missing_oban_jobs(TrainJob)
     unstuck_trains()
-    Logger.debug("Cleaned up job trains.")
+    Logger.debug("JobTrains.Maintenance performed.")
   end
 
   @impl Oban.Plugin
@@ -39,7 +40,7 @@ defmodule D9s.JobTrains.CleanupPlugin do
 
   @impl GenServer
   def init(opts) do
-    cleanup_now()
+    perform()
     interval = Keyword.get(opts, :interval, @default_interval)
     schedule_cleanup(interval)
     {:ok, interval}
@@ -47,7 +48,7 @@ defmodule D9s.JobTrains.CleanupPlugin do
 
   @impl GenServer
   def handle_info(:cleanup, interval) do
-    cleanup_now()
+    perform()
     schedule_cleanup(interval)
     {:noreply, interval}
   end
@@ -64,10 +65,10 @@ defmodule D9s.JobTrains.CleanupPlugin do
         where: j.state in ["cancelled", "discarded"],
         select: {c.train_id, j.worker, j.state, c.oban_job_id}
 
-    for {train_id, oban_worker, oban_job_state, oban_job_id} <- Repo.all(stuck_trains) do
+    for {train_id, oban_worker, oban_job_state, oban_job_id} <- @repo.all(stuck_trains) do
       with worker_config <- safe_get_worker_config(oban_worker),
            true <- should_advance?(oban_job_state, worker_config) do
-        D9s.JobTrains.Advancement.advance(train_id, oban_job_id)
+        JobTrains.Advancement.advance(train_id, oban_job_id)
       end
     end
   end
@@ -93,10 +94,10 @@ defmodule D9s.JobTrains.CleanupPlugin do
         where: is_nil(j.id),
         select: s.oban_job_id
 
-    job_ids = Repo.all(record_ids)
+    job_ids = @repo.all(record_ids)
 
     if job_ids != [] do
-      Repo.delete_all(from s in schema, where: s.oban_job_id in ^job_ids)
+      @repo.delete_all(from s in schema, where: s.oban_job_id in ^job_ids)
     end
   end
 end
