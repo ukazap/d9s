@@ -27,13 +27,15 @@ Trade-offs and implications
 Literatures and/or web links
 ```
 
-### Linking
+### Notation and Linking
 
 Use `adr/N` notation to refer to other ADR, e.g.
 
 ```markdown
 Please refer to [adr/0](adr/0-architecture-decision-records.md) for ADR template.
 ```
+
+Always use `adr/N` notation in all communication channels: never write "ADR 0" or "ADR/0", always "adr/0".
 
 ## Consequences
 - Simple, established pattern
